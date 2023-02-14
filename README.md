@@ -5,7 +5,7 @@ Installation
 
 To use this application, you will need to have Node.js and MongoDB installed on your computer.
 
-    1. Clone this repository using git clone https://github.com/karlo292/lightweight-blog
+    1. Clone this repository using 'git clone https://github.com/karlo292/lightweight-blog'
     2. Navigate to the project directory using 'cd lightweight-blog'
     3. Install the dependencies using 'npm install'
     4. Rename .example-env to .env and add your variables
