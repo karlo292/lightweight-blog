@@ -24,6 +24,11 @@ To view a post, click on the post title on the home page. If you are the admin, 
 
 To edit or delete a post, click on the post title and then click the "Edit" or "Delete" button. You must be the admin to perform these actions.
 
+<h1>How to contribute</h1>
+
+If you want to contribute to this project make a useful feature and make a push request.
+
+
 <h1>Credits</h1>
 
 This application was created by karlo292 (https://github.com/karlo292). It is licensed under the MIT license.
