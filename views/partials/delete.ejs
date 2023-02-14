@@ -1,0 +1,13 @@
+
+<div class="d-flex justify-content-between" style="margin-bottom: 10rem; margin-top: 10rem; margin-left: 85%;">
+    <form action="/posts/<%= postId %>/edit" method="post">
+        <div class="form-group">
+            <button type="submit" name="deletePostButton" class="btn btn-primary" style="background: lawngreen; color: black;">Edit</button>
+        </div>
+    </form>
+    <form action="/posts/<%= postId %>/delete" method="post">
+        <div class="form-group">
+            <button type="submit" name="deletePostButton" class="btn btn-primary" style="background: orangered; color: black;">Delete</button>
+        </div>
+    </form>
+</div>
