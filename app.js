@@ -5,11 +5,12 @@ const bodyParser = require("body-parser");
 const ejs = require("ejs");
 const _ = require('lodash');
 const mongoose = require('mongoose');
+require('dotenv').config({path: __dirname + '/.env'})
 
 
 const app = express();
 
-mongoose.connect('mongodb+srv://kmongodb1:NPc7G8AsVRfH7Uq@cluster0.xtsiyum.mongodb.net/blogDB', { useNewUrlParser: true });
+mongoose.connect(process.env['MONGODB'], { useNewUrlParser: true });
 
 const postSchema = {
   title: String,
@@ -74,13 +75,12 @@ app.get('/contact', function (req, res) {
 
 app.get('/compose', function (req, res) {
 
-  if(req.socket.remoteAddress === '::ffff:127.0.0.1' || req.socket.remoteAddress === '::ffff:31.45.230.142'){
+  if (process.env['WHITELISTED_IPS'].includes(req.socket.remoteAddress)) {
     console.log('asdasd')
     res.render('compose')
   } else {
     res.send("You can't access this page since you're not an admin, sorry!")
   }
-
 
 
 })
@@ -117,12 +117,14 @@ app.get('/posts/:postId', function (req, res) {
 
 app.post('/posts/:postId/delete', function (req, res){
 
-  console.log('It worked!')
+
 
   const requestedPostId = req.params.postId;
 
-  if(req.socket.remoteAddress === '::ffff:127.0.0.1' || req.socket.remoteAddress === '::ffff:31.45.230.142'){
+  if (process.env['WHITELISTED_IPS'].includes(req.socket.remoteAddress)) {
+
     Post.findOneAndDelete({_id: requestedPostId}, function(err, post){
+
       if(err){
         console.log(err)
       } else{
@@ -132,20 +134,21 @@ app.post('/posts/:postId/delete', function (req, res){
       }
       res.redirect('/')
 
-
     });
   } else {
     res.send("You can't access this page since you're not an admin, sorry!")
   }
 
-
 })
+
+
 
 app.get('/posts/:postId/edit', function (req,res){
   const requestedPostId = req.params.postId
-  if(req.socket.remoteAddress === '::ffff:127.0.0.1' || req.socket.remoteAddress === '::ffff:31.45.230.142'){
-    Post.findOne({_id: requestedPostId}, function(err, post){
 
+  if (process.env['WHITELISTED_IPS'].includes(req.socket.remoteAddress)) {
+    Post.findOne({_id: requestedPostId}, function(err, post){
+      i = 99999
       res.render("edit", {
         title: post.title,
         content: post.content,
@@ -160,31 +163,31 @@ app.get('/posts/:postId/edit', function (req,res){
 })
 app.post('/posts/:postId/edit', function (req,res) {
   const requestedPostId = req.params.postId;
-  if(req.socket.remoteAddress === '::ffff:127.0.0.1' || req.socket.remoteAddress === '::ffff:31.45.230.142'){
+
+  if (process.env['WHITELISTED_IPS'].includes(req.socket.remoteAddress)) {
+
     Post.findOne({_id: requestedPostId}, function (err, post) {
       if (err) {
         console.log(err)
       } else {
         console.log('Found post!')
-
       }
     })
+
     res.redirect('/posts/' + requestedPostId + '/edit')
-  }else {
+
+  } else {
     res.send("You can't access this page since you're not an admin, sorry!")
   }
-
-
 })
 
 app.post('/posts/:postId/edit/done', function (req,res) {
   const requestedPostId = req.params.postId;
 
-  if(req.socket.remoteAddress === '::ffff:127.0.0.1' || req.socket.remoteAddress === '::ffff:31.45.230.142'){
+  if (process.env['WHITELISTED_IPS'].includes(req.socket.remoteAddress)) {
 
     let newTitle = req.body.postTitle;
     let newContent = req.body.postBody;
-
     Post.findOneAndUpdate({_id: requestedPostId}, {title: newTitle, content: newContent}, function(err, post){
       if (err) {
         console.log(err)
@@ -193,21 +196,12 @@ app.post('/posts/:postId/edit/done', function (req,res) {
         console.log("Document updated");
         post.save()
         res.redirect('/posts/' + requestedPostId)
-
-
       }
-
     });
 
   } else {
     res.send("You can't access this page since you're not an admin, sorry!")
   }
-
-
-
-
-
-
 
 })
 
