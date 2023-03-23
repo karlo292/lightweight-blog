@@ -31,6 +31,13 @@ app.use(express.static("public"));
 // HOME PAGE
 
 app.get('/', function (req, res) {
+  let compose = false
+  if (process.env['WHITELISTED_IPS'].includes(req.socket.remoteAddress)) {
+    console.log('asdasd')
+    compose = true
+  }
+
+
 
   posts = Post.find({}, (error, posts) => {
     if (error) {
@@ -38,7 +45,8 @@ app.get('/', function (req, res) {
     } else {
       console.log(posts);
       res.render('home', {
-        posts: posts
+        posts: posts,
+        compose: compose
       })
     }
   });
