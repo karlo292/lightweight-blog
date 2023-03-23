@@ -14,6 +14,7 @@ mongoose.connect(process.env['MONGODB'], { useNewUrlParser: true });
 
 const postSchema = {
   title: String,
+  about: String,
   content: String
 }
 
@@ -89,6 +90,7 @@ app.post('/compose', function (req, res) {
 
   const post = new Post({
     title: req.body.postTitle,
+    about: req.body.postAbout,
     content: req.body.postBody
   })
   post.save(function(err){
@@ -108,6 +110,7 @@ app.get('/posts/:postId', function (req, res) {
 
     res.render("post", {
       title: post.title,
+      about: post.about,
       content: post.content,
       postId: post._id
     });
@@ -151,6 +154,7 @@ app.get('/posts/:postId/edit', function (req,res){
       i = 99999
       res.render("edit", {
         title: post.title,
+        about: post.about,
         content: post.content,
         postId: post._id
       });
@@ -187,8 +191,9 @@ app.post('/posts/:postId/edit/done', function (req,res) {
   if (process.env['WHITELISTED_IPS'].includes(req.socket.remoteAddress)) {
 
     let newTitle = req.body.postTitle;
+    let newAbout = req.body.postAbout;
     let newContent = req.body.postBody;
-    Post.findOneAndUpdate({_id: requestedPostId}, {title: newTitle, content: newContent}, function(err, post){
+    Post.findOneAndUpdate({_id: requestedPostId}, {title: newTitle, content: newContent, about: newAbout}, function(err, post){
       if (err) {
         console.log(err)
         res.redirect('/')
