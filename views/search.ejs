@@ -1,0 +1,55 @@
+<%- include('partials/header') %>
+
+<style>
+
+    .search-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
+
+    input[type=text] {
+        padding: 10px;
+        border: none;
+        border-radius: 5px 0 0 5px;
+        background-color: #f1f1f1;
+    }
+
+    button[type=submit] {
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 0 5px 5px 0;
+        cursor: pointer;
+        padding: 10px;
+    }
+
+    button[type=submit]:hover {
+        background-color: #45a049;
+    }
+
+
+</style>
+
+<div class="search-container">
+    <form action="/search" method="post">
+        <input name="query" type="text" placeholder="Search..." name="search">
+        <button type="submit"><i class="fa fa-search"></i>Search</button>
+    </form>
+</div>
+
+<section>
+    <% if(query.length > 0) { %>
+        <h1>Search Results for "<%= query %>":</h1>
+        <% for (let i = 0; i < posts.length; i++) { %>
+            <h1> <%= posts[i].title %> </h1>
+            <p> <%= posts[i].about %> </p>
+
+            <a href="/posts/<%=posts[i]._id%>">Read more...</a>
+
+        <% } %>
+
+    <% } %>
+</section>
+
+<%- include('partials/footer') %>

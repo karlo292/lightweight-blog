@@ -10,6 +10,9 @@ require('dotenv').config({path: __dirname + '/.env'})
 
 const app = express();
 
+let query = ''
+let posts = ''
+
 mongoose.connect(process.env['MONGODB'], { useNewUrlParser: true });
 
 const postSchema = {
@@ -95,17 +98,20 @@ app.get('/compose', function (req, res) {
 })
 
 app.post('/compose', function (req, res) {
+  if (process.env['WHITELISTED_IPS'].includes(req.socket.remoteAddress)) {
 
-  const post = new Post({
-    title: req.body.postTitle,
-    about: req.body.postAbout,
-    content: req.body.postBody
-  })
-  post.save(function(err){
-    if (!err){
-      res.redirect("/");
-    }
-  });
+    const post = new Post({
+      title: req.body.postTitle,
+      about: req.body.postAbout,
+      content: req.body.postBody
+    })
+    post.save(function(err){
+      if (!err){
+        res.redirect("/");
+      }
+    });
+
+  }
 })
 
 // POSTS PAGE
@@ -218,7 +224,34 @@ app.post('/posts/:postId/edit/done', function (req,res) {
 
 })
 
+// SEARCH PAGE
 
+app.get('/search', function(req, res) {
+
+  console.log(query)
+  console.log(posts)
+  res.render('search', {
+    query: query,
+    posts: posts
+  });
+});
+
+app.post('/search', function(req, res) {
+  query = req.body.query;
+  console.log(query);
+  Post.find({ title: { $regex: query, $options: "i" } })
+      .then(posts => {
+        res.render('search', {
+          query: query,
+          posts: posts
+        });
+      })
+      .catch(err => {
+        console.error(err);
+      });
+
+
+});
 
 app.listen(3000, function() {
   console.log("Server started on port 3000");
