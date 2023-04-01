@@ -1,23 +1,65 @@
 <%- include('partials/header') %>
 
-<% if(compose === true) { %>
+<% if (compose === true) { %>
     <li id="compose"><a href="../compose">COMPOSE :></a></li>
 <% } %>
+<main>
+    <h1>Welcome to my blog!</h1>
+    <p>This website was created as a small project for my portfolio.</p>
+    <section class="posts">
+        <% posts.forEach(function (post) { %>
+        <article class="post">
+            <h2><a href="/posts/<%=post._id%>"><%= post.title %></a></h2>
+            <p class="post-summary"><%= post.about %></p>
+            <a href="/posts/<%=post._id%>" class="read-more">Read more...</a>
+        </article>
+        <% })%>
+    </section>
+</main>
+<style>
+    main {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
 
-    <h1>Home</h1>
-    <p>Hey, welcome to my blog!</p>
-    <p>This website was created as a small project for my portfolio</p>
+    h1, h2 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
 
+    .posts {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        grid-gap: 2rem;
+    }
 
-    <% for (let item = 0; item < posts.length; item++) { %>
+    .post {
+        border: 1px solid #ddd;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+    }
 
-    <% } %>
+    .post-summary {
+        margin-bottom: 1rem;
+    }
 
-    <% posts.forEach(function (post) { %>
-        <h1> <%= post.title %> </h1>
-        <p> <%= post.about %> </p>
+    .read-more {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        background-color: #0077cc;
+        color: #fff;
+        text-decoration: none;
+        transition: background-color 0.2s ease, transform 0.2s ease;
+    }
 
-        <a href="/posts/<%=post._id%>">Read more...</a>
-    <% })%>
+    .read-more:hover {
+        background-color: aqua;
+        transform: translateY(-3px);
+        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+    }
+</style>
 
 <%- include('partials/footer') %>

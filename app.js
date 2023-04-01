@@ -8,6 +8,10 @@ const mongoose = require('mongoose');
 require('dotenv').config({path: __dirname + '/.env'})
 
 
+
+
+
+
 const app = express();
 
 let query = ''
@@ -15,14 +19,9 @@ let posts = ''
 
 mongoose.connect(process.env['MONGODB'], { useNewUrlParser: true });
 
-const postSchema = {
-  title: String,
-  about: String,
-  content: String
-}
 
 
-const Post = mongoose.model('Post', postSchema);
+const Post = require(__dirname + '/models/postModel')
 
 
 
@@ -165,7 +164,6 @@ app.get('/posts/:postId/edit', function (req,res){
 
   if (process.env['WHITELISTED_IPS'].includes(req.socket.remoteAddress)) {
     Post.findOne({_id: requestedPostId}, function(err, post){
-      i = 99999
       res.render("edit", {
         title: post.title,
         about: post.about,
@@ -252,6 +250,26 @@ app.post('/search', function(req, res) {
 
 
 });
+
+// Login & Register
+
+app.get('/login', function(req, res) {
+
+  res.render('login', {
+
+  })
+
+
+})
+
+app.get('/register', function(req, res) {
+
+  res.render('register', {
+
+  })
+
+
+})
 
 app.listen(3000, function() {
   console.log("Server started on port 3000");
