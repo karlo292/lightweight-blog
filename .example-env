@@ -2,6 +2,6 @@
 # If you want your posts to be use mongodb
 MONGODB=mongodb+srv://something
 
-# These are Ip addresses that can edit and create new posts, this is temporary until I add authentication
-# Please put ::ffff: before typing ip for it to work!
-WHITELISTED_IPS=[::ffff:127.0.0.1]
+# Admin username and password
+ADMIN_USER=admin
+ADMIN_PASS=adminpass

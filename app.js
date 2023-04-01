@@ -5,6 +5,8 @@ const bodyParser = require("body-parser");
 const ejs = require("ejs");
 const _ = require('lodash');
 const mongoose = require('mongoose');
+const cookieParser = require("cookie-parser");
+const sessions = require('express-session');
 require('dotenv').config({path: __dirname + '/.env'})
 
 
@@ -13,6 +15,8 @@ require('dotenv').config({path: __dirname + '/.env'})
 
 
 const app = express();
+
+let compose = false
 
 let query = ''
 let posts = ''
@@ -30,25 +34,51 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 
+// parsing the incoming data
+app.use(express.json());
+
+app.use(cookieParser());
+
+//username and password
+const adminuser = process.env['ADMIN_USER']
+const adminpass = process.env['ADMIN_PASS']
+
+// a variable to save a session
+var session;
+
+
+const oneDay = 1000 * 60 * 60 * 24;
+app.use(sessions({
+  secret: "thisismysecrctekeyfhrgfgrfrty84fwir767",
+  saveUninitialized:true,
+  cookie: { maxAge: oneDay },
+  resave: false
+}));
+
+
+
 // HOME PAGE
 
 app.get('/', function (req, res) {
-  let compose = false
-  if (process.env['WHITELISTED_IPS'].includes(req.socket.remoteAddress)) {
-    console.log('asdasd')
-    compose = true
+  try {
+    console.log(req.session)
+  } catch (err) {
+    console.log(err)
   }
 
+
+  if (req.session.userid === adminuser) {
+    compose = true
+  }
 
 
   posts = Post.find({}, (error, posts) => {
     if (error) {
       console.error(error);
     } else {
-      console.log(posts);
       res.render('home', {
         posts: posts,
-        compose: compose
+        compose: compose,
       })
     }
   });
@@ -86,8 +116,8 @@ app.get('/contact', function (req, res) {
 
 app.get('/compose', function (req, res) {
 
-  if (process.env['WHITELISTED_IPS'].includes(req.socket.remoteAddress)) {
-    console.log('asdasd')
+  if (req.session.userid === adminuser) {
+    console.log(req.session)
     res.render('compose')
   } else {
     res.send("You can't access this page since you're not an admin, sorry!")
@@ -97,7 +127,8 @@ app.get('/compose', function (req, res) {
 })
 
 app.post('/compose', function (req, res) {
-  if (process.env['WHITELISTED_IPS'].includes(req.socket.remoteAddress)) {
+  console.log(req.session.userid)
+  if (req.session.userid === adminuser) {
 
     const post = new Post({
       title: req.body.postTitle,
@@ -127,7 +158,6 @@ app.get('/posts/:postId', function (req, res) {
       content: post.content,
       postId: post._id
     });
-
   });
 })
 
@@ -137,7 +167,7 @@ app.post('/posts/:postId/delete', function (req, res){
 
   const requestedPostId = req.params.postId;
 
-  if (process.env['WHITELISTED_IPS'].includes(req.socket.remoteAddress)) {
+  if (req.session.userid === adminuser) {
 
     Post.findOneAndDelete({_id: requestedPostId}, function(err, post){
 
@@ -161,8 +191,7 @@ app.post('/posts/:postId/delete', function (req, res){
 
 app.get('/posts/:postId/edit', function (req,res){
   const requestedPostId = req.params.postId
-
-  if (process.env['WHITELISTED_IPS'].includes(req.socket.remoteAddress)) {
+  if (req.session.userid === adminuser) {
     Post.findOne({_id: requestedPostId}, function(err, post){
       res.render("edit", {
         title: post.title,
@@ -180,7 +209,7 @@ app.get('/posts/:postId/edit', function (req,res){
 app.post('/posts/:postId/edit', function (req,res) {
   const requestedPostId = req.params.postId;
 
-  if (process.env['WHITELISTED_IPS'].includes(req.socket.remoteAddress)) {
+  if (req.session.userid === adminuser) {
 
     Post.findOne({_id: requestedPostId}, function (err, post) {
       if (err) {
@@ -200,7 +229,7 @@ app.post('/posts/:postId/edit', function (req,res) {
 app.post('/posts/:postId/edit/done', function (req,res) {
   const requestedPostId = req.params.postId;
 
-  if (process.env['WHITELISTED_IPS'].includes(req.socket.remoteAddress)) {
+  if (req.session.userid === adminuser) {
 
     let newTitle = req.body.postTitle;
     let newAbout = req.body.postAbout;
@@ -252,24 +281,33 @@ app.post('/search', function(req, res) {
 });
 
 // Login & Register
+// THIS IS MADE ONLY FOR ADMINS!!!
+app.get('/login',(req,res) => {
 
-app.get('/login', function(req, res) {
+  if(req.session.userid){
+    res.render('user')
+  }else
+    res.render('login', {
 
-  res.render('login', {
+    })
+});
 
-  })
-
-
+app.post('/user',(req,res) => {
+  if(req.body.username == adminuser && req.body.password == adminpass){
+    req.session.userid=req.body.username;
+    console.log(req.session)
+    res.render('user')
+  }
+  else{
+    res.send('Invalid username or password');
+  }
 })
 
-app.get('/register', function(req, res) {
+app.get('/logout',(req,res) => {
+  req.session.destroy();
+  res.redirect('/');
+});
 
-  res.render('register', {
-
-  })
-
-
-})
 
 app.listen(3000, function() {
   console.log("Server started on port 3000");

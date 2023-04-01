@@ -7,20 +7,26 @@
   <meta charset="utf-8">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <link rel="stylesheet" href="/css/styles.css">
-  <nav class="navbar navbar-default">
-    <div class="container">
-      <div class="navbar-header">
-        <p class="navbar-brand">BLOG</p>
-      </div>
-        <ul class="nav navbar-nav navbar-right">
-          <!-- 6 -->
-          <li id="home"><a href="/">HOME</a></li>
-          <li id="about"><a href="/about">ABOUT</a></li>
-          <li id="contact"><a href="/contact">CONTACT</a></li>
+</head>
 
-        </ul>
+<body>
+<nav class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <p class="navbar-brand">BLOG</p>
     </div>
-  </nav>
-
-  <body>
-    <div class="container">
+    <ul class="nav navbar-nav navbar-right">
+      <li id="home"><a href="/">HOME</a></li>
+      <li id="about"><a href="/about">ABOUT</a></li>
+      <li id="contact"><a href="/contact">CONTACT</a></li>
+      <% try {%>
+      <% if (compose) { %>
+        <li id="compose"><a href="/compose">COMPOSE</a></li>
+      <% } %>
+      <% } catch(err) {%>
+      <% }%>
+      <li id="login"><a href="/login">LOGIN</a></li>
+    </ul>
+  </div>
+</nav>
+<div class="container">
