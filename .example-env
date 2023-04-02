@@ -5,3 +5,4 @@ MONGODB=mongodb+srv://something
 # Admin username and password
 ADMIN_USER=admin
 ADMIN_PASS=adminpass
+SESSION_SECRET=thisissosecretomg
