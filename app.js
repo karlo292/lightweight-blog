@@ -31,6 +31,11 @@ const Post = require(__dirname + '/models/postModel')
 
 app.set('view engine', 'ejs');
 
+app.use(function(req, res, next) {
+  res.setHeader("Content-Security-Policy", "script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';");
+  return next();
+});
+
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 
@@ -178,8 +183,7 @@ app.post('/posts/:postId/delete', function (req, res){
         console.log('ID: ' + requestedPostId)
         console.log('Title: ' + req.params.title)
       }
-      res.redirect('/')
-
+      res.redirect('/');
     });
   } else {
     res.send("You can't access this page since you're not an admin, sorry!")
